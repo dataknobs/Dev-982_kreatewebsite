@@ -1,0 +1,27 @@
+
+name: Get PPT File Name 
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  get_ppt_name:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Get PPT File Name
+        id: get_ppt_name
+        run: |
+          ppt_file=$(find input -name "*.ppt")
+          ppt_name=$(basename "$ppt_file" .ppt)
+          echo "::set-output name=ppt_name::$ppt_name"
+
+      - name: Create New Folder
+        run: |
+          new_folder_name=${{ steps.get_ppt_name.outputs.ppt_name }}
+          mkdir "$new_folder_name"
