@@ -35,7 +35,7 @@ jobs:
 
       - name: Convert PPT to PDF and Create Artifact
         run: |
-          ppt_name="${{ jobs.get_ppt_name.outputs.ppt_name }}"
+          ppt_name="${{ needs.get_ppt_name.outputs.ppt_name }}"
           # Your commands to convert PPT to PDF using an appropriate tool (e.g., LibreOffice)
           # Example using LibreOffice:
           soffice --headless --convert-to pdf $ppt_name.pptx
@@ -62,7 +62,7 @@ jobs:
 
       - name: Convert PDF to Images
         run: |
-          ppt_name="${{ jobs.get_ppt_name.outputs.ppt_name }}"
+          ppt_name="${{ needs.get_ppt_name.outputs.ppt_name }}"
           # Create a directory to store the images
           mkdir $ppt_name
 
