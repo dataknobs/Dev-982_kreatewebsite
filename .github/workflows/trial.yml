@@ -50,7 +50,7 @@ jobs:
           soffice --headless --convert-to pdf "$PPT_NAME".pptx
           
           # Move the generated PDF to a location where artifacts can pick it up
-          # mv "$PPT_NAME".pdf $GITHUB_WORKSPACE/"$PPT_NAME".pdf
+          mv "$PPT_NAME".pdf $GITHUB_WORKSPACE/pdf_files
        
       - name: Verify PDF Output
         run: |
@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: my-pdf
-          path: "$PPT_NAME.pdf"
+          path: pdf_files
         
           
   convert_pdf_to_images:
@@ -76,7 +76,6 @@ jobs:
 
       - name: Convert PDF to Images
         run: |
-          ppt_name=${{ needs.get_ppt_name.outputs.ppt_name }}
           # Create a directory to store the images
           mkdir "$PPT_NAME"
 
