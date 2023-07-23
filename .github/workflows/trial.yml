@@ -16,9 +16,10 @@ jobs:
       - name: Get PPT File Name
         id: get_ppt_name
         run: |
-          ppt_file=$(find input -name "*.ppt")
-          ppt_name=$(basename "$ppt_file" .ppt)
-          echo "::set-output name=ppt_name::$ppt_name"
+          ppt_file=$(find input -name "*.pptx")
+          ppt_name=$(basename "$ppt_file" .pptx)
+          echo "Output of this $ppt_name"
+        # echo "::set-output name=ppt_name::$ppt_name"
           
     outputs:
       ppt_name: ${{steps.get_ppt_name.outputs.ppt_name}}
@@ -40,14 +41,14 @@ jobs:
 
       - name: Convert PPT to PDF and Create Artifact
         run: |
-          ppt_name="${{ needs.get_ppt_name.outputs.ppt_name }}"
+          
 
           # Your commands to convert PPT to PDF using an appropriate tool (e.g., LibreOffice)
           # Example using LibreOffice:
             
-          soffice --headless --convert-to pdf $ppt_name.pptx
+          soffice --headless --convert-to pdf "${{ needs.get_ppt_name.outputs.ppt_name }}".pptx
 
-          mv $ppt_name.pdf $GITHUB_WORKSPACE/$ppt_name.pdf
+        # mv $ppt_name.pdf $GITHUB_WORKSPACE/$ppt_name.pdf
         # Move the generated PDF to a location where artifacts can pick it up
         # post: |
 
