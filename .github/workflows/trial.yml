@@ -41,7 +41,7 @@ jobs:
 
       - name: Convert PPT to PDF and Create Artifact
         run: |
-          ppt_name = ${{ needs.get_ppt_name.outputs.ppt_name }}
+          ppt_name=${{ needs.get_ppt_name.outputs.ppt_name }}
 
           # Your commands to convert PPT to PDF using an appropriate tool (e.g., LibreOffice)
           # Example using LibreOffice:
