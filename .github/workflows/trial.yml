@@ -84,7 +84,7 @@ jobs:
           git config --global user.email "devparker48@gmail.com"
           git add "${{needs.get_ppt_name.outputs.ppt_name}}"/
           git commit -m "Add converted images from PDF"
-          git remote set-url origin https://github.com/Dev-98/Dev_kreatewebsite/tree/main/input/content
+          git remote set-url origin https://github.com/Dev-98/Dev_kreatewebsite.git
 
           git push origin main
 
