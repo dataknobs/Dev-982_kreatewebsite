@@ -19,7 +19,9 @@ jobs:
           ppt_file=$(find input -name "*.pptx")
           ppt_name=$(basename "$ppt_file" .pptx)
           echo "Output of this $ppt_name"
-        # echo "::set-output name=ppt_name::$ppt_name"
+          
+          # Export the variable so that it can be used in subsequent steps and jobs
+          echo "export PPT_NAME=$ppt_name" >> $GITHUB_ENV
           
     outputs:
       ppt_name: ${{steps.get_ppt_name.outputs.ppt_name}}
@@ -41,22 +43,25 @@ jobs:
 
       - name: Convert PPT to PDF and Create Artifact
         run: |
-          ppt_name=${{ needs.get_ppt_name.outputs.ppt_name }}
 
           # Your commands to convert PPT to PDF using an appropriate tool (e.g., LibreOffice)
           # Example using LibreOffice:
             
-          soffice --headless --convert-to pdf "$ppt_name".pptx
+          soffice --headless --convert-to pdf "$PPT_NAME".pptx
           
           # Move the generated PDF to a location where artifacts can pick it up
-          mv "$ppt_name".pdf $GITHUB_WORKSPACE/"$ppt_name".pdf
+          # mv "$PPT_NAME".pdf $GITHUB_WORKSPACE/"$PPT_NAME".pdf
        
-
+      - name: Verify PDF Output
+        run: |
+          # List files in the current directory to check if the PDF was generated
+          ls -la
+          
       - name: Upload PDF Artifact
         uses: actions/upload-artifact@v2
         with:
           name: my-pdf
-          path: "${ppt_name}.pdf"
+          path: "$PPT_NAME".pdf
         
           
   convert_pdf_to_images:
@@ -73,10 +78,10 @@ jobs:
         run: |
           ppt_name=${{ needs.get_ppt_name.outputs.ppt_name }}
           # Create a directory to store the images
-          mkdir "$ppt_name"
+          mkdir "$PPT_NAME"
 
           # Convert PDF to images using pdftoppm
-          pdftoppm -png "$ppt_name".pdf "$ppt_name"/slide
+          pdftoppm -png "$PPT_NAME".pdf "$PPT_NAME"/slide
 
       - name: Clone Another Repo
         run: |
@@ -86,7 +91,7 @@ jobs:
 
       - name: Move Images to Another Repo
         run: |
-          mv images other_repo/"$ppt_name"
+          mv images other_repo/"$PPT_NAME"
 
       - name: Commit and Push Changes to Another Repo
         run: |
@@ -97,6 +102,6 @@ jobs:
 
       - name: Clean Up
         run: |
-          rm -rf "$ppt_name"
+          rm -rf "$PPT_NAME"
           rm my_presentation.pdf
 
