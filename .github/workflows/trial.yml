@@ -56,12 +56,12 @@ jobs:
         run: |
           # List files in the current directory to check if the PDF was generated
           ls -la
-          
+
       - name: Upload PDF Artifact
         uses: actions/upload-artifact@v2
         with:
           name: my-pdf
-          path: "$PPT_NAME".pdf
+          path: "$PPT_NAME.pdf"
         
           
   convert_pdf_to_images:
