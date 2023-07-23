@@ -47,21 +47,21 @@ jobs:
           # Your commands to convert PPT to PDF using an appropriate tool (e.g., LibreOffice)
           # Example using LibreOffice:
             
-          soffice --headless --convert-to pdf "$PPT_NAME".pptx
+          libreoffice --headless --convert-to pdf "$PPT_NAME".pptx
           
           # Move the generated PDF to a location where artifacts can pick it up
-          mv "$PPT_NAME".pdf $GITHUB_WORKSPACE/"$PPT_NAME".pdf
+          # mv "$PPT_NAME".pdf $GITHUB_WORKSPACE/"$PPT_NAME".pdf
        
       - name: Verify PDF Output
         run: |
           # List files in the current directory to check if the PDF was generated
           ls -la
 
-      - name: Upload PDF Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: my-pdf
-          path: "$PPT_NAME.pdf"
+      # - name: Upload PDF Artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: my-pdf
+      #     path: "$PPT_NAME.pdf"
         
           
   convert_pdf_to_images:
@@ -69,10 +69,8 @@ jobs:
     needs: [convert_ppt_to_pdf, get_ppt_name]
 
     steps:
-      - name: Download PDF Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: my-pdf
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Convert PDF to Images
         run: |
@@ -82,25 +80,16 @@ jobs:
           # Convert PDF to images using pdftoppm
           pdftoppm -png "$PPT_NAME".pdf "$PPT_NAME"/slide
 
-      - name: Clone Another Repo
+      - name: Commit and Push Changes
         run: |
-          git config --global user.email "devparker48@gmail.com"
           git config --global user.name "Dev-98"
-          git clone https://github.com/dataknobs/kreatewebsites-intermediate/tree/main/Dev-98 other_repo
-
-      - name: Move Images to Another Repo
-        run: |
-          mv images other_repo/"$PPT_NAME"
-
-      - name: Commit and Push Changes to Another Repo
-        run: |
-          cd other_repo
-          git add .
-          git commit -m "Add converted images"
+          git config --global user.email "devparker48@gmail.com"
+          git add "$PPT_NAME"/
+          git commit -m "Add converted images from PDF"
           git push
 
       - name: Clean Up
         run: |
           rm -rf "$PPT_NAME"
-          rm my_presentation.pdf
+          rm "$PPT_NAME".pdf
 
