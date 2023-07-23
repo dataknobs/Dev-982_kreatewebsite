@@ -30,8 +30,13 @@ jobs:
 
       - name: Install Poppler and Libreoffice
         run: |
-          apt-get update && sudo apt-get install -y poppler-utils
-          apt update && apt install libreoffice
+          sudo apt-get update 
+          sudo apt-get install -y poppler-utils
+          sudo apt update 
+          sudo apt install libreoffice
+          sudo apt update
+          sudo apt-get update
+
 
       - name: Convert PPT to PDF and Create Artifact
         run: |
