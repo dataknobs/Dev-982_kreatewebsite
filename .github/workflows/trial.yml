@@ -33,6 +33,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+        
 
       - name: Install Poppler and Libreoffice
         run: |
@@ -44,6 +45,7 @@ jobs:
       - name: Convert PPT to PDF and Create Artifact
         run: |
 
+          echo "Please god = $PPT_NAME"
           # Your commands to convert PPT to PDF using an appropriate tool (e.g., LibreOffice)
           # Example using LibreOffice:
             
@@ -63,17 +65,9 @@ jobs:
       #     name: my-pdf
       #     path: "$PPT_NAME.pdf"
         
-          
-  convert_pdf_to_images:
-    runs-on: ubuntu-latest
-    needs: [get_ppt_name, convert_ppt_to_pdf]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Check out name
         run: echo "to check file is reaching here = $PPT_NAME"
+
       - name: Convert PDF to Images
         run: |
           # Create a directory to store the images
