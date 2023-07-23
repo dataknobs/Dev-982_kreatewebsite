@@ -46,19 +46,17 @@ jobs:
           # Your commands to convert PPT to PDF using an appropriate tool (e.g., LibreOffice)
           # Example using LibreOffice:
             
-          soffice --headless --convert-to pdf $ppt_name.pptx
+          soffice --headless --convert-to pdf "$ppt_name".pptx
           
-      - name: Move PDF to Artifacts
-        run: |
           # Move the generated PDF to a location where artifacts can pick it up
-          mv $ppt_name.pdf $GITHUB_WORKSPACE/$ppt_name.pdf
+          mv "$ppt_name".pdf $GITHUB_WORKSPACE/"$ppt_name".pdf
        
 
       - name: Upload PDF Artifact
         uses: actions/upload-artifact@v2
         with:
           name: my-pdf
-          path: $ppt_name.pdf
+          path: "${ppt_name}.pdf"
         
           
   convert_pdf_to_images:
@@ -75,10 +73,10 @@ jobs:
         run: |
           ppt_name="${{ needs.get_ppt_name.outputs.ppt_name }}"
           # Create a directory to store the images
-          mkdir $ppt_name
+          mkdir "$ppt_name"
 
           # Convert PDF to images using pdftoppm
-          pdftoppm -png $ppt_name.pdf $ppt_name/slide
+          pdftoppm -png "$ppt_name".pdf "$ppt_name"/slide
 
       - name: Clone Another Repo
         run: |
@@ -88,7 +86,7 @@ jobs:
 
       - name: Move Images to Another Repo
         run: |
-          mv images other_repo/$ppt_name
+          mv images other_repo/"$ppt_name"
 
       - name: Commit and Push Changes to Another Repo
         run: |
@@ -99,6 +97,6 @@ jobs:
 
       - name: Clean Up
         run: |
-          rm -rf $ppt_name
+          rm -rf "$ppt_name"
           rm my_presentation.pdf
 
