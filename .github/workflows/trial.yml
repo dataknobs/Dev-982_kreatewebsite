@@ -51,7 +51,7 @@ jobs:
           # Your commands to convert PPT to PDF using an appropriate tool (e.g., LibreOffice)
           # Example using LibreOffice:
             
-          libreoffice --headless --convert-to pdf "${{needs.get_ppt_name.outputs.ppt_name}}".pptx
+          libreoffice --headless --convert-to pdf input/content/"${{needs.get_ppt_name.outputs.ppt_name}}".pptx
           
           # Move the generated PDF to a location where artifacts can pick it up
           # mv "$PPT_NAME".pdf $GITHUB_WORKSPACE/"$PPT_NAME".pdf
