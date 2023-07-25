@@ -79,7 +79,7 @@ jobs:
 
       - name: Push output into diffrent Repo
         run: |
-          GITHUB_TOKEN = ${{ secrets.Token }}
+          GITHUB_TOKEN = ${{ secrets.TOKEN }}
 
           git clone https://user:$GITHUB_TOKEN@github.com/kreatewebsite/kreate_output # This works
 
