@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      ppt_name: ${{ steps.get_ppt_name.outputs.ppt_name }}
+      ppt_name: ${{ steps.get_ppt_name.outputs.ppt_names }}
 
     steps:
       - name: Checkout Repository
@@ -61,14 +61,14 @@ jobs:
         run: |
           ppt_name = "${{needs.get_ppt_name.outputs.ppt_name}}"
           # Create a directory to store the images
-          mkdir "$REPO_NAME/$ppt_name"
+          mkdir "$REPO_NAME/${{needs.get_ppt_name.outputs.ppt_name}}"
 
           # Convert PDF to images using pdftoppm
-          pdftoppm -png "$ppt_name".pdf "$REPO_NAME/$ppt_name"/slide 
+          pdftoppm -png "${{needs.get_ppt_name.outputs.ppt_name}}".pdf "$REPO_NAME/${{needs.get_ppt_name.outputs.ppt_name}}"/slide 
           
       - name: Move PDF file into dir
         run: |
-          mv "$ppt_name".pdf to "$REPO_NAME/$ppt_name" || true
+          mv "${{needs.get_ppt_name.outputs.ppt_name}}".pdf to "$REPO_NAME/${{needs.get_ppt_name.outputs.ppt_name}}" || true
           
       - name: Verify PDF Output
         run: |
@@ -79,7 +79,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: converted-images
-          path: "$REPO_NAME/$ppt_name"
+          path: "$REPO_NAME/${{needs.get_ppt_name.outputs.ppt_name}}"
           
 
       - name: Checkout Output Repository
@@ -93,7 +93,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: converted-pdfs
-          path: "$REPO_NAME/$ppt_name"
+          path: "$REPO_NAME/${{needs.get_ppt_name.outputs.ppt_name}}"
 
       - name: Move PDF to Output Repository
         run: |
