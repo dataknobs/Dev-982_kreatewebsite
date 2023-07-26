@@ -37,10 +37,13 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Get Repository Name
+        id: get_repo_name
         run: |
           # Extract the repository name from $GITHUB_REPOSITORY
           REPO_NAME=$(basename $GITHUB_REPOSITORY)
           echo "Repository name without owner: $REPO_NAME"
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_OUTPUT
+          
 
       - name: Install Poppler and Libreoffice
         run: |
@@ -97,12 +100,12 @@ jobs:
       
       - name: Create Username folder to store output
         run: |
-          mkdir "$REPO_NAME"
+          mkdir "${{steps.get_repo_name.outputs.REPO_NAME}}"
           ls -a
           
       - name: Move image folder to Output Repository
         run: |
-          mv "${{needs.get_ppt_name.outputs.ppt_name}}" "$REPO_NAME"
+          mv "${{needs.get_ppt_name.outputs.ppt_name}}" "${{steps.get_repo_name.outputs.REPO_NAME}}"
           ls -a
       - name: Commit and Push Image to Output Repository
         run: |
