@@ -59,7 +59,7 @@ jobs:
        
       - name: Convert PDF to Images
         run: |
-          ppt_name = "${{needs.get_ppt_name.outputs.ppt_name}}"
+          
           # Create a directory to store the images
           mkdir "$REPO_NAME/${{needs.get_ppt_name.outputs.ppt_name}}"
 
