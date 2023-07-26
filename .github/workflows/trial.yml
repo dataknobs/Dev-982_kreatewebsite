@@ -30,12 +30,15 @@ jobs:
   convert_ppt_to_pdf:
     runs-on: ubuntu-latest
     needs: get_ppt_name
+    env:
+      PPT_NAME: ${{needs.get_ppt_name.outputs.ppt_name}}
     
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
         
+      - name: Get Repository Name
+        run: echo "Running in repository $GITHUB_REPOSITORY"
 
       - name: Install Poppler and Libreoffice
         run: |
@@ -46,57 +49,64 @@ jobs:
 
       - name: Convert PPT to PDF and Create Artifact
         run: |
-
-          echo "Name is = ${{needs.get_ppt_name.outputs.ppt_name}}"
+          ppt_name = "${{needs.get_ppt_name.outputs.ppt_name}}"
+          echo "$PPT_NAME"
 
           # Your commands to convert PPT to PDF using an appropriate tool (e.g., LibreOffice)
           # Example using LibreOffice:
             
-          libreoffice --headless --convert-to pdf input/content/"${{needs.get_ppt_name.outputs.ppt_name}}".pptx
+          libreoffice --headless --convert-to pdf input/content/"$ppt_name".pptx
           
-          # Move the generated PDF to a location where artifacts can pick it up
-          # mv "$PPT_NAME".pdf $GITHUB_WORKSPACE/"$PPT_NAME".pdf
        
+      
+
+      - name: Convert PDF to Images
+        run: |
+          ppt_name = "${{needs.get_ppt_name.outputs.ppt_name}}"
+          # Create a directory to store the images
+          mkdir "$ppt_name"
+
+          # Convert PDF to images using pdftoppm
+          pdftoppm -png "$ppt_name".pdf "$ppt_name"/slide 
+          
+      - name: Move PDF file into dir
+        run: |
+          mv "$ppt_name".pdf to "$ppt_name" || true
+          
       - name: Verify PDF Output
         run: |
           # List files in the current directory to check if the PDF was generated
           ls -a
+          
+      - name: Upload Artifact - images
+        uses: actions/upload-artifact@v2
+        with:
+          name: converted-images
+          path: "$ppt_name"
+          
 
-      # - name: Upload PDF Artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: my-pdf
-      #     path: "$PPT_NAME.pdf"
-    
+      - name: Checkout Output Repository
+        uses: actions/checkout@v2
+        with:
+          repository: kreatewebsite/kreate_output
+          token: ${{ secrets.TOKEN }}
+          ref: main
+        
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: converted-pdfs
+          path: "$ppt_name"
 
-      - name: Convert PDF to Images
+      - name: Move PDF to Output Repository
         run: |
-          # Create a directory to store the images
-          mkdir "${{needs.get_ppt_name.outputs.ppt_name}}"
-
-          # Convert PDF to images using pdftoppm
-          pdftoppm -png "${{needs.get_ppt_name.outputs.ppt_name}}".pdf "${{needs.get_ppt_name.outputs.ppt_name}}"/slide
-          
-
-      - name: Push output into diffrent Repo
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          ls -a
+      - name: Commit and Push PDF to Output Repository
         run: |
-
-          git clone https://user:$GITHUB_TOKEN@github.com/kreatewebsite/kreate_output # This works
-
-          cd kreate_output
-          git config user.name "Dev-98"
-          git config user.email "devparker48@gmail.com"
-          git config --unset-all http.https://github.com/.extraheader
           
-          git add "${{needs.get_ppt_name.outputs.ppt_name}}"/
-          git commit -m "Add converted images from PDF"
-          
-          git push --set-upstream origin main
-          
-      - name: Clean Up
-        run: |
-          rm -rf "${{needs.get_ppt_name.outputs.ppt_name}}"
-          rm "${{needs.get_ppt_name.outputs.ppt_name}}".pdf
+          git config --global user.name "Dev-98"
+          git config --global user.email "devparker48@gmail.com"
+          git add .
+          git commit -m "Add PDF output"
+          git push origin main
 
