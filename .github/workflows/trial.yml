@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      ppt_name: ${{ steps.get_ppt_name.outputs.ppt_names }}
+      ppt_name: ${{ steps.get_ppt_name.outputs.ppt_name }}
 
     steps:
       - name: Checkout Repository
