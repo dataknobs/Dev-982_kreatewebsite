@@ -68,7 +68,7 @@ jobs:
           
       - name: Move PDF file into dir
         run: |
-          mv "${{needs.get_ppt_name.outputs.ppt_name}}".pdf to "${{needs.get_ppt_name.outputs.ppt_name}}" || true
+          mv "${{needs.get_ppt_name.outputs.ppt_name}}".pdf "${{needs.get_ppt_name.outputs.ppt_name}}" || true
           
       - name: Verify PDF Output
         run: |
@@ -94,11 +94,17 @@ jobs:
         with:
           name: converted-images
           path: "${{needs.get_ppt_name.outputs.ppt_name}}"
-
-      - name: Move PDF to Output Repository
+      
+      - name: Create Username folder to store output
         run: |
+          mkdir "$REPO_NAME"
           ls -a
-      - name: Commit and Push PDF to Output Repository
+          
+      - name: Move image folder to Output Repository
+        run: |
+          mv "${{needs.get_ppt_name.outputs.ppt_name}}" "$REPO_NAME"
+          ls -a
+      - name: Commit and Push Image to Output Repository
         run: |
           
           git config --global user.name "Dev-98"
